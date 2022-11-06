@@ -1,0 +1,45 @@
+[[package]]
+name = "bottle"
+version = "0.12.19"
+description = "Fast and simple WSGI-framework for small web-applications."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "py-mini-racer"
+version = "0.5.0"
+description = "Minimal, modern embedded V8 for Python."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "pytz"
+version = "2022.6"
+description = "World timezone definitions, modern and historical"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "requirejs"
+version = "0.2.2"
+description = "Run RequireJS (r.js) without node."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+py-mini-racer = {version = "<0.6", markers = "platform_system == \"Darwin\" or platform_system == \"Linux\""}
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.8"
+content-hash = "3beb912faec165ca511ebc7fdd833958bb6189c990d5f79d44acbb6707c9713a"
+
+[metadata.files]
+bottle = []
+py-mini-racer = []
+pytz = []
+requirejs = []

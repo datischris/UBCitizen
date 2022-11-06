@@ -1,0 +1,135 @@
+
+<html>
+  <head>
+    <body style="background-color:black;">
+    <script src='ajax.js'></script>
+    <script src='chat.js'></script>
+    <style>      
+      #map {
+        width: 80%;
+        height: 600px;
+        background-color: grey;
+      }
+    </style>
+  </head>  
+  <center>
+    <strong style = "position:relative;
+    right: -7px;font-size:60px;font-family: sans-serif;color:#005bbb;">UB</strong>
+    <i style = "font-size:55px;font-family:sans-serif;color:white;"> Citizen </i>
+  <div id ="crime"></div>
+  <h1 style = "font-family: monospace; font-size:25px; color:white;">Report Incident</h1>
+  <button style="font-family: monospace;border-radius: 20px; width:380px;font-size:20px;position:relative;top: -10px;" class="my-button"onClick="getLocation(1)">Click here to mark your location!</button>
+     <script> 
+       var x = document.getElementById("crime");
+       var y = document.getElementById("coords");
+      var status = 0;
+      function getLocation(num) {
+       if (navigator.geolocation){
+         status = num
+         navigator.geolocation.getCurrentPosition(position);
+       } 
+       else {
+         console.log("Geolocation is not supported.");
+       }
+      }
+
+      function position(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        console.log(latitude);
+        console.log(longitude);
+        if (status!=0){
+          let crimetext = latitude.toString()+' '+longitude.toString();
+          console.log(crimetext);
+          let tosend=JSON.stringify({'latlong':crimetext});
+          ajaxPostRequest('/mapsend',tosend,initMap)
+        }
+        else{
+          let tosend=JSON.stringify({'latlong':""});
+          ajaxPostRequest('/mapsend',tosend,initMap)
+        }
+
+        //y.innerHTML = latitude.toString()+' '+longitude.toString()+',';
+  
+      } 
+
+      function error(error){
+        switch(error.code) {
+        case error.PERMISSION_DENIED:
+          x.innerHTML = "User denied the request for Geolocation."
+          break;
+        case error.POSITION_UNAVAILABLE:
+          x.innerHTML = "Location information is unavailable."
+          break;
+        case error.TIMEOUT:
+          x.innerHTML = "The request to get user location timed out."
+          break;
+        case error.UNKNOWN_ERROR:
+          x.innerHTML = "An unknown error occurred."
+          break;
+        }
+      }
+
+       
+     </script>  
+
+    <div id="map"></div>    
+    <script type = "text/javascript">      
+      function initMap(response) {
+        // var parsed = JSON.parse(response);
+        // var currentcoords_str = parsed[parsed.length - 1];
+        // var currentcoords = currentcoords_str['latlong'].split(' ');
+        // var currentlat = parseFloat(currentcoords[0]);
+        // var currentlng = parseFloat(currentcoords[1]);
+        var test= {lat: 43.00279877060522,lng: -78.78725177601375};        
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 15,
+          center: test,
+        });
+        let coords=JSON.parse(response);
+        for (let coord of coords){          
+          console.log(coord);
+          var splitdata = coord['latlong'].split(' ')
+            console.log(splitdata[0]);
+            console.log(splitdata[1]);
+            var lat = parseFloat(splitdata[0]);
+            var lng = parseFloat(splitdata[1]);
+            // var today = new Date();            
+            // var time = today.getHours() + ":" + today.getMinutes();
+            new google.maps.Marker({
+            position: {lat: lat,lng: lng},
+            Map: map,
+            // title: time,
+            });
+        }
+      }
+
+      function loadmap(){
+        ajaxGetRequest('/map',initMap)
+      }
+      </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDNh4wOW6NVegqanZBkiBnLfva6gBjaRWc&callback=initMap">
+  </script>
+  <body onload='setInterval(loadchat,200);setInterval(getLocation(0),200)'> 
+  <h1 style = "font-family:monospace;color:dimgray;font-size:23px;color:#C11C42;"><strong>Live Chat ●</strong></h1>
+  <font style="monospace" style="color:white;">
+  <div id='chat'style="font-family: monospace; padding:5px;padding-top:-5;font-size:15px;border-style: ridge;text-align:left; border-width: thin;color:DodgerBlue; overflow-y:scroll;overflow-y:auto;width:450;height:250px;scrollbar-width:thin; scrollbar-color:lightsteelblue dimgray;"></div><br>
+ <input class="text_box" style="font:monospace;border-radius: 10px;" placeholder= "Tell us whats happening!" type='text' id='message'>
+  <button style="font-family: monospace;border-radius: 15px;" class="my-button" onClick='sendmessage();' id='button'>Send</button>
+     <script>
+      var input = document.getElementById('message');
+      input.addEventListener("keydown", function(e){
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        document.getElementById('button').click();
+        document.getElementById('chat').scrollIntoView();
+      }
+      })
+    </script>
+  </body>
+    <p style = "color:#ABAEB9;font-family:monospace;font-size;background-color:black;font-size:20px;">By Matthew Cheung, Christopher Varghese, Sydney Chan, and Jeffrey Wong</p>
+  <img src="https://d2y36twrtb17ty.cloudfront.net/sessions/_branding/8ed13430-f321-4070-9ab1-b32326e874f6/636179468067542000_embedlogo.png" style = "height:43px;width:86px;">  
+  </center>
+  </html>
+
